@@ -8,7 +8,7 @@ enum PlayerState { idle, run }
 // Creates a component with an empty animation which can be set later
 class Player extends SpriteAnimationGroupComponent
     with HasGameRef<PixelAdventure> {
-  Player({required this.character});
+  Player({position, required this.character}) : super(position: position);
 
   String character;
   late final SpriteAnimation idleAnimation;
