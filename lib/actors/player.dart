@@ -3,12 +3,16 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:pixel_adventure/pixel_adventure.dart';
 
-enum PlayerState { idle, running }
+enum PlayerState { idle, run }
 
 // Creates a component with an empty animation which can be set later
 class Player extends SpriteAnimationGroupComponent
     with HasGameRef<PixelAdventure> {
+  Player({required this.character});
+
+  String character;
   late final SpriteAnimation idleAnimation;
+  late final SpriteAnimation runAnimation;
   final double stepTime = 0.05; // 50millisec == 20fps
 
   @override
@@ -18,19 +22,28 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _loadAllAnimations() {
-    idleAnimation = SpriteAnimation.fromFrameData(
-      game.images.fromCache('Main Characters/Ninja Frog/Idle (32x32).png'),
+    idleAnimation = _spriteAnimation('Idle', 11);
+    runAnimation = _spriteAnimation('Run', 12);
+
+    //List of all animations
+    animations = {
+      PlayerState.idle: idleAnimation,
+      PlayerState.run: runAnimation,
+    };
+
+    // Set current animation
+    current = PlayerState.idle;
+    // current = PlayerState.run;
+  }
+
+  SpriteAnimation _spriteAnimation(String state, int amount) {
+    return SpriteAnimation.fromFrameData(
+      game.images.fromCache('Main Characters/$character/$state (32x32).png'),
       SpriteAnimationData.sequenced(
-        amount: 11,
+        amount: amount,
         stepTime: stepTime,
         textureSize: Vector2.all(32),
       ),
     );
-
-    //List of all animations
-    animations = {PlayerState.idle: idleAnimation};
-
-    // Set current animation
-    current = PlayerState.idle;
   }
 }
