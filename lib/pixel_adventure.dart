@@ -10,13 +10,13 @@ class PixelAdventure extends FlameGame {
   Color backgroundColor() => const Color(0xFF211F30);
   late final CameraComponent cam;
 
-  final world = Level();
+  final world = Level(levelName: 'Level-02');
 
   @override
   FutureOr<void> onLoad() async {
     // Load all images into cache
     await images.loadAllImages();
-    
+
     cam = CameraComponent.withFixedResolution(
       world: world,
       width: 640,
