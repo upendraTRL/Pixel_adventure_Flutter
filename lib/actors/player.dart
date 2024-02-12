@@ -3,7 +3,11 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:pixel_adventure/pixel_adventure.dart';
 
+//Enum - Plays important role in using/setting(automatically) variables
+//rather typing separatly
 enum PlayerState { idle, run }
+
+enum PlayerDirection { left, right, none }
 
 // Creates a component with an empty animation which can be set later
 class Player extends SpriteAnimationGroupComponent
@@ -15,10 +19,22 @@ class Player extends SpriteAnimationGroupComponent
   late final SpriteAnimation runAnimation;
   final double stepTime = 0.05; // 50millisec == 20fps
 
+  PlayerDirection playerDirection = PlayerDirection.none;
+  double moveSpeed = 100;
+  Vector2 velocity = Vector2.zero();
+  bool isFacingRight = true;
+
   @override
   FutureOr<void> onLoad() {
     _loadAllAnimations();
     return super.onLoad();
+  }
+
+  @override
+  //dt stands for delta-times ???
+  void update(double dt) {
+    _updatePlayerMovement(dt);
+    super.update(dt);
   }
 
   void _loadAllAnimations() {
@@ -45,5 +61,35 @@ class Player extends SpriteAnimationGroupComponent
         textureSize: Vector2.all(32),
       ),
     );
+  }
+
+  void _updatePlayerMovement(double dt) {
+    double dirX = 0.0;
+    switch (playerDirection) {
+      case PlayerDirection.left:
+        if (isFacingRight) {
+          flipHorizontallyAroundCenter(); //Flip character facing to left
+          isFacingRight = false;
+        }
+        current = PlayerState.run;
+        dirX -= moveSpeed; // -ve to move towards left
+        break;
+      case PlayerDirection.right:
+        if (!isFacingRight) {
+          flipHorizontallyAroundCenter(); //Flip character facing to right
+          isFacingRight = true;
+        }
+        current = PlayerState.run;
+        dirX += moveSpeed; // +ve to move towards right
+        break;
+      case PlayerDirection.none:
+        current = PlayerState.idle;
+        break;
+      default:
+    }
+
+    velocity = Vector2(dirX, 0.0);
+    position +=
+        velocity * dt; //Here, 'dt' helps to set same speed irrespective to fps.
   }
 }
