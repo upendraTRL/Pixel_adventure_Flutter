@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:flutter/src/services/keyboard_key.g.dart';
+import 'package:flutter/src/services/raw_keyboard.dart';
 import 'package:pixel_adventure/pixel_adventure.dart';
 
 //Enum - Plays important role in using/setting(automatically) variables
@@ -11,7 +13,7 @@ enum PlayerDirection { left, right, none }
 
 // Creates a component with an empty animation which can be set later
 class Player extends SpriteAnimationGroupComponent
-    with HasGameRef<PixelAdventure> {
+    with HasGameRef<PixelAdventure>, KeyboardHandler {
   Player({position, required this.character}) : super(position: position);
 
   String character;
@@ -35,6 +37,27 @@ class Player extends SpriteAnimationGroupComponent
   void update(double dt) {
     _updatePlayerMovement(dt);
     super.update(dt);
+  }
+
+  @override
+  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    kP(LogicalKeyboardKey value) => keysPressed.contains(value);
+    final isLeftPressed =
+        kP(LogicalKeyboardKey.keyA) || kP(LogicalKeyboardKey.arrowLeft);
+    final isRightPressed =
+        kP(LogicalKeyboardKey.keyD) || kP(LogicalKeyboardKey.arrowRight);
+
+    if (isLeftPressed && isRightPressed) {
+      playerDirection = PlayerDirection.none;
+    } else if (isLeftPressed) {
+      playerDirection = PlayerDirection.left;
+    } else if (isRightPressed) {
+      playerDirection = PlayerDirection.right;
+    } else {
+      playerDirection = PlayerDirection.none;
+    }
+
+    return super.onKeyEvent(event, keysPressed);
   }
 
   void _loadAllAnimations() {
