@@ -22,6 +22,7 @@ class PixelAdventure extends FlameGame
   late final CameraComponent cam;
   Player player = Player(character: 'Mask Dude');
   late JoystickComponent joystick;
+  bool showJoystick = true; //True for mobile device, False for desktop
 
   @override
   FutureOr<void> onLoad() async {
@@ -39,9 +40,19 @@ class PixelAdventure extends FlameGame
 
     addAll([cam, world]);
 
-    addJoystick();
+    if (showJoystick) {
+      addJoystick();
+    }
 
     return super.onLoad();
+  }
+
+  @override
+  void update(double dt) {
+    if (showJoystick) {
+      updateJoystick();
+    }
+    super.update(dt);
   }
 
   void addJoystick() {
@@ -60,5 +71,23 @@ class PixelAdventure extends FlameGame
     );
 
     add(joystick);
+  }
+
+  void updateJoystick() {
+    switch (joystick.direction) {
+      case JoystickDirection.left:
+      case JoystickDirection.upLeft:
+      case JoystickDirection.downLeft:
+        player.playerDirection = PlayerDirection.left;
+        break;
+      case JoystickDirection.right:
+      case JoystickDirection.upRight:
+      case JoystickDirection.downRight:
+        player.playerDirection = PlayerDirection.right;
+        break;
+      default:
+        player.playerDirection = PlayerDirection.none;
+        break;
+    }
   }
 }
