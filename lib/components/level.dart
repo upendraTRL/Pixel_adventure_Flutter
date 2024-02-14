@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:pixel_adventure/actors/player.dart';
+import 'package:pixel_adventure/components/player.dart';
 
 class Level extends World {
   Level({required this.levelName, required this.player});
